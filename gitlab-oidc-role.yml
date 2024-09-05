@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  GitLabProjectName:
+    Type: String
+    Description: "The full name of board/name + / + repo name"
+
+Resources:
+  GitLabCIProvider:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      Url: "https://gitlab.com"
+      ClientIdList:
+        - "https://gitlab.com"
+
+  GitlabCIRunnerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/gitlab.com
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                gitlab.com:sub: !Sub project_path:${GitLabProjectName}:ref_type:branch:ref:main
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
