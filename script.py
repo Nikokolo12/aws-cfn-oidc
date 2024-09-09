@@ -1,0 +1,19 @@
+#!/usr/bin/python3
+import boto3
+client = boto3.client('ec2')
+resp=client.run_instances(ImageId='ami-0e6329e222e662a52',
+                      InstanceType='t2.micro',
+                      MinCount=2,
+                      MaxCount=2,
+                      KeyName=,
+                      TagSpecifications=[
+                          {
+                              'ResourceType': 'instance',
+                              'Tags': [{'Key': 'Name','Value': 'Linux Server'},
+                                       {'Key': 'Env','Value': 'Dev'}]
+                          },
+                      ],
+                      )
+for i in resp['Instances']:
+      print("Instance ID Created is :{} Instance Type Created is : {}" .format(i['InstanceId'],i['InstanceType']))
+view raw

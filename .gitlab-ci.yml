@@ -1,0 +1,31 @@
+stages:
+  - validate
+  - deploy
+
+variables:
+  STACK_NAME: ec2-stack
+  AWS_DEFAULT_REGION: us-east-1
+
+set_identity:
+  image:
+    name: amazon/aws-cli:2.17.44
+    entrypoint: [""]
+  stage: validate
+  script:
+    - >
+      export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s"
+      $(aws sts assume-role-with-web-identity
+      --role-arn ${ROLE_ARN}
+      --role-session-name "GitLabRunner-${CI_PROJECT_ID}-${CI_PIPELINE_ID}"
+      --web-identity-token $CI_JOB_JWT_V2
+      --duration-seconds 3600
+      --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]'
+      --output text))
+
+deploy:
+  image:
+    name: amazon/aws-cli:2.17.44
+    entrypoint: [""]
+  stage: deploy
+  script:
+    - aws cloudformation --region ${AWS_DEFAULT_REGION} create-stack --stack-name $STACK_NAME --template-body file://ec2-setup.yml --parameters ParameterKey=SSHKeyNameParameter,ParameterValue="${SSH_KEY_NAME_PARAMETER}" ParameterKey=SSHPublicKeyValueParameter,ParameterValue="$(echo "${SSH_PUBLIC_KEY_VALUE_PARAMETER}" | base64 -d)"
