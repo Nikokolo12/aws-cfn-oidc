@@ -3,8 +3,8 @@ stages:
   - deploy
 
 variables:
-  STACK_NAME: ec2-stack
-  AWS_DEFAULT_REGION: us-east-1
+  STACK_NAME: "ec2-stack"
+  AWS_DEFAULT_REGION: "us-east-1"
 
 set_identity:
   image:
@@ -28,4 +28,9 @@ deploy:
     entrypoint: [""]
   stage: deploy
   script:
-    - aws cloudformation --region ${AWS_DEFAULT_REGION} create-stack --stack-name $STACK_NAME --template-body file://ec2-setup.yml --parameters ParameterKey=SSHKeyNameParameter,ParameterValue="${SSH_KEY_NAME_PARAMETER}" ParameterKey=SSHPublicKeyValueParameter,ParameterValue="$(echo "${SSH_PUBLIC_KEY_VALUE_PARAMETER}" | base64 -d)"
+    - |
+      aws cloudformation --region ${AWS_DEFAULT_REGION} create-stack \
+      --stack-name $STACK_NAME --template-body file://ec2-setup.yml \
+      --parameters \
+        ParameterKey=SSHKeyNameParameter,ParameterValue="${SSH_KEY_NAME_PARAMETER}" \
+        ParameterKey=SSHPublicKeyValueParameter,ParameterValue="$(echo "${SSH_PUBLIC_KEY_VALUE_PARAMETER}" | base64 -d)"
