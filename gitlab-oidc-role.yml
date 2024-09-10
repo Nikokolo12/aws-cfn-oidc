@@ -5,11 +5,6 @@ Parameters:
     Type: String
     Description: "The full name of board/name + / + repo name"
 
-  # GitLabWebSite:
-  #   Type: String
-  #   Description: "Your corporate gitlab website without https:// or leave it empty"
-  #   Default: "gitlab.com"
-
 Resources:
   GitLabCIProvider:
     Type: AWS::IAM::OIDCProvider
@@ -32,4 +27,4 @@ Resources:
               StringEquals:
                 gitlab.com:sub: !Sub project_path:${GitLabProjectName}:ref_type:branch:ref:main
       ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+        - "arn:aws:iam::aws:policy/AWSCloudFormationFullAccess"
