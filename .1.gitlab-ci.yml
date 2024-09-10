@@ -13,8 +13,7 @@ set_identity:
   stage: validate
   id_tokens:
     MY_OIDC_TOKEN:
-      aud: "https://devops-gitlab.inno.ws/"
-  before_script:
+      aud: "https://gitlab.com"
     - export AWS_PROFILE=oidc
     - mkdir -p ~/.aws
     - echo "${GITLAB_OIDC_TOKEN}" > /tmp/web_identity_token

@@ -14,9 +14,9 @@ Resources:
   GitLabCIProvider:
     Type: AWS::IAM::OIDCProvider
     Properties:
-      Url: !Sub https://devops-gitlab.inno.ws
+      Url: !Sub https://gitlab.com
       ClientIdList:
-        - !Sub https://devops-gitlab.inno.ws
+        - !Sub https://gitlab.com
 
   GitlabCIRunnerRole:
     Type: AWS::IAM::Role
@@ -26,10 +26,10 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Federated: !Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/devops-gitlab.inno.ws
+              Federated: !Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/gitlab.com
             Action: sts:AssumeRoleWithWebIdentity
             Condition:
               StringEquals:
-                devops-gitlab.inno.ws:sub: !Sub project_path:${GitLabProjectName}:ref_type:branch:ref:master
+                gitlab.com:sub: !Sub project_path:${GitLabProjectName}:ref_type:branch:ref:main
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
